@@ -815,7 +815,7 @@ function renderHistoricalImagesInPanel(qid) {
     if (imgObj.caption && imgObj.caption.trim() !== '') {
       block += `<div class="article main-text"><p>${imgObj.caption}</p></div>`;
     } else {
-      block += `<div class="article main-text nodata"><p>Belum ada keterangan foto di Wikidata</p></div>`;
+      block += `<div class="article main-text nodata"><p>Belum ada keterangan foto di Wikidata.</p></div>`;
     }
     
     // Tutup bungkus div
