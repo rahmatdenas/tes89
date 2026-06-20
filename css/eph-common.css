@@ -206,6 +206,7 @@ nav li a.active {
     align-items: center;      /* Tengah horizontal */
     justify-content: center;  /* Tengah vertikal */
     box-sizing: border-box;
+  margin-bottom: 15px;
 }
 
 #details figure > a {
