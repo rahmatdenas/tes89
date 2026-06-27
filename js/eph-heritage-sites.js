@@ -142,34 +142,26 @@ function populateProvinceTypesData() {
     'kuliner': 'P276'
   };
   
-  let propLokasi = petaProperti[currentKategoriUtama] || 'P131'; 
+let propLokasi = petaProperti[currentKategoriUtama] || 'P131'; 
   
   let wilayahClause1 = '';
   let unionEkstra = ''; 
   let hierarkiLokasi = '?p131Lokasi wdt:P131* ?provinsi .'; 
-  
-  // Pengecualian khusus untuk tokoh
-  if (currentKategoriUtama === 'tokoh') {
-    hierarkiLokasi = '?p131Lokasi wdt:P19* ?provinsi .';
-  }
 
   if (provInput === 'all') {
     wilayahClause1 = '?provinsi wdt:P31 wd:Q5098 .';
   } else {
     wilayahClause1 = `?provinsi wdt:P131 ${provInput}.`;
     let wilayahClause2 = `BIND(${provInput} AS ?provinsi) BIND(${provInput} AS ?p131Lokasi)`; 
-    
-    // Pengecualian UNION untuk tokoh
-    if (currentKategoriUtama !== 'tokoh') {
-      unionEkstra = `
-      UNION {
-        ${wilayahClause2}
-        ?site wdt:P31 ?jenis ;
-              wdt:${propLokasi} ?p131Lokasi .
-      }`;
-    }
+    unionEkstra = `
+    UNION {
+      ${wilayahClause2}
+      ?site wdt:P31 ?jenis ;
+            wdt:${propLokasi} ?p131Lokasi .
+    }`;
   }
   
+  // 6. Suntikkan semua parameter ke dalam Templat Universal
   let dynamicQuery = baseQuery
     .replace(/<PLACEHOLDER_WILAYAH_1>/g, wilayahClause1)
     .replace(/<PLACEHOLDER_PROP_LOKASI>/g, propLokasi)
