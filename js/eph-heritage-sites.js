@@ -96,6 +96,8 @@ function doPreProcessing() {
 }
 
 var currentKategoriUtama = 'general'; 
+var currentNamaKlaster = 'Objek';     // Penampung nama klaster
+var currentNamaWilayah = 'Semua Wilayah'; // Penampung nama daerah
 
 function tentukanKategoriKueri(inputTxt) {
   let teks = inputTxt.toUpperCase(); 
@@ -122,11 +124,49 @@ function tentukanKategoriKueri(inputTxt) {
   return 'general';
 }
 
+// Fungsi baru untuk menentukan nama klaster dari Q-ID
+function dapatkanNamaKlaster(inputTxt) {
+  let teks = inputTxt.toUpperCase();
+  
+  // Daftarkan kelompok klastermu di sini
+const kelompokMasjid = ['Q32815', 'Q56235676', 'Q56235673', 'Q1454820'];
+if (kelompokMasjid.some(qid => teks.includes(qid))) return 'Masjid';
+const kelompokMasjid = ['Q16970', 'Q2977', 'Q56242215'];
+if (kelompokMasjid.some(qid => teks.includes(qid))) return 'Gereja';
+  if (teks.includes('Q15104430')) return 'Cagar Alam';
+const kelompokMasjid = ['Q137894610', 'Q35112127', 'Q4246737', 'Q19860854', '109607'];
+if (kelompokMasjid.some(qid => teks.includes(qid))) return 'Bangunan';
+  if (teks.includes('Q55488')) return 'Stasiun';
+  if (teks.includes('Q44782')) return 'Pelabuhan';
+  if (teks.includes('Q23442')) return 'Pulau';
+  if (/\bQ5\b/.test(teks)) return 'Tokoh';
+  if (teks.includes('Q34770')) return 'Bahasa';
+  if (teks.includes('Q11032') || teks.includes('Q41298')) return 'Media Massa';
+  if (teks.includes('Q7725634')) return 'Karya Fiksi';
+  if (teks.includes('Q3305213')) return 'Lukisan';
+  if (teks.includes('Q1641020')) return 'Lontar';
+  const kelompokKuliner = ['Q19861951', 'Q3305213', 'Q87167', 'Q11460', 'Q107357104', 'Q189819', 'Q36192', 'Q7944'];
+  if (kelompokKuliner.some(qid => teks.includes(qid))) return 'Kuliner';
+  
+  // Jika tidak masuk daftar di atas, beri nama default
+  return 'Objek'; 
+}
+
 function populateProvinceTypesData() {
   let inputTxt = document.getElementById('jenis-input').value.trim();
-  let provInput = document.getElementById('provinsi-input').value;
+  let provDropdown = document.getElementById('provinsi-input');
+  let provInput = provDropdown.value;
   
+  // 1. Simpan Data Global 
   currentKategoriUtama = tentukanKategoriKueri(inputTxt);
+  currentNamaKlaster = dapatkanNamaKlaster(inputTxt); // Panggil penamaan klaster
+  currentNamaWilayah = provDropdown.options[provDropdown.selectedIndex].text;
+  
+  // 2. Ubah Teks Loading (Pastikan ID elemen loading-mu sesuai, misalnya 'loading-text')
+  let teksLoading = document.getElementById('loading-text');
+  if (teksLoading) {
+    teksLoading.textContent = `Sedang Menarik Data ${currentNamaKlaster} di ${currentNamaWilayah}...`;
+  }
   let baseQuery = KUMPULAN_KUERI_0['universal'];
   
   const petaProperti = {
@@ -629,7 +669,8 @@ function updateFeatureCounts(totalValidRecords) {
 
   let searchInput = document.getElementById('search-input');
   if (searchInput) {
-    searchInput.placeholder = `Menampilkan ${totalValidRecords} hasil (atau ketik yang ingin dicari)`;
+    // === PERUBAHAN PLACEHOLDER SESUAI KLASTER ===
+    searchInput.placeholder = `Menampilkan ${totalValidRecords} hasil ${currentNamaKlaster} (atau ketik yang ingin dicari)`;
   }
 }
 
@@ -766,45 +807,32 @@ function generateRecordDetails(qid) {
     articleHtml = `<div class="article main-text nodata"><p>Entitas ini belum memiliki artikel. <a href="${gFormUrl}" target="_blank" rel="noopener noreferrer" class="sunting-linktambah">Tambahkan!</a></p></div>`;
   }
   
-  let wikiUrlUtama = `https://www.wikidata.org/wiki/${qid}`;
+let wikiUrlUtama = `https://www.wikidata.org/wiki/${qid}`;
   let tautanSuntingRingkasan = `<a href="${wikiUrlUtama}" target="_blank" class="sunting-link" title="Sunting data di Wikidata" aria-label="Sunting data di Wikidata"></a>`;
 
-  let teksJudul = 'Informasi';
-  if (currentKategoriUtama === 'alam') {
-    teksJudul = 'Informasi Geografis';
-  } else if (currentKategoriUtama === 'pers' || currentKategoriUtama === 'publikasi') {
-    teksJudul = 'Informasi Publikasi';
-  } else if (currentKategoriUtama === 'fiksi') {
-    teksJudul = 'Informasi Karya Fiksi';
-  } else if (currentKategoriUtama === 'tokoh') {
-    teksJudul = 'Profil Tokoh';
-  } else if (currentKategoriUtama === 'bahasa') {
-    teksJudul = 'Informasi Bahasa';
-  } else if (currentKategoriUtama === 'kuliner') {
-    let inputAsli = document.getElementById('jenis-input').value;
-    if (inputAsli.includes('Q93184')) {
-      teksJudul = 'Informasi Lukisan';
-    } else if (inputAsli.includes('Q1641020')) {
-      teksJudul = 'Informasi Lontar';
-    } else {
-      teksJudul = 'Informasi Kuliner';
-    }
-  } else {
-    let isBersejarah = false;
-    if (record.rawTahunBerdiri) {
-      let tahunBangunan = parseInt(record.rawTahunBerdiri.substring(0, 4));
-      if (tahunBangunan <= (new Date().getFullYear() - 50)) isBersejarah = true;
-    }
-    teksJudul = isBersejarah ? 'Situs Bersejarah' : 'Informasi Bangunan';
+  // ==========================================
+  // PERBAIKAN 3: RENDER HEADER KLUSTER DINAMIS
+  // ==========================================
+  let isBersejarah = false;
+  if (record.rawTahunBerdiri) {
+    let tahunBangunan = parseInt(record.rawTahunBerdiri.substring(0, 4));
+    if (tahunBangunan <= (new Date().getFullYear() - 50)) isBersejarah = true;
+  }
+
+  // Daftarkan klaster yang masuk akal diberi gelar "Bersejarah"
+  let klasterBisaBersejarah = ['Masjid', 'Gereja', 'Bangunan', 'Stasiun', 'Pelabuhan']; 
+  
+  let teksJudul = `Informasi ${currentNamaKlaster}`;
+  if (klasterBisaBersejarah.includes(currentNamaKlaster) && isBersejarah) {
+    teksJudul = `Informasi ${currentNamaKlaster} Bersejarah`;
   }
 
   let designationsHtml = `<h2 style="margin-top:10px">${teksJudul} ${tautanSuntingRingkasan}</h2>`;
   designationsHtml += '<ul class="designations">';
 
+  // Siapkan daftar provinsi
   let arrayProvinsi = Object.values(record.designations).filter(p => p !== 'Tidak dalam Provinsi');
-  if (arrayProvinsi.length === 0) {
-    arrayProvinsi.push('Indonesia');
-  }
+  if (arrayProvinsi.length === 0) arrayProvinsi.push('Indonesia');
   let teksDaftarProvinsi = arrayProvinsi.join(', '); 
 
   let spesifik = record.lokasiSpesifik; 
@@ -815,37 +843,64 @@ function generateRecordDetails(qid) {
     namaLokasi = `${spesifik}, ${teksDaftarProvinsi}`; 
   }
 
-  let infoLokasiHtml = '';
-  let prefixLokasi = 'Terletak di:';
-  if (currentKategoriUtama === 'tokoh') prefixLokasi = 'Terkait dengan:';
-  else if (currentKategoriUtama === 'bahasa') prefixLokasi = 'Digunakan di:';
-  else if (currentKategoriUtama === 'kuliner') prefixLokasi = 'Berasal dari:';
+  // ==========================================
+  // PERBAIKAN 4 & 5: LOGIKA 'TERLETAK' & 'DIDIRIKAN'
+  // ==========================================
+  let prefixLokasi = 'Terletak di'; 
+  let showTahun = true; 
+  let prefixTahun = 'Didirikan';
 
+  // 1. Tentukan Prefix Lokasi & Matikan Tahun untuk Alam/Non-Alam
+  if (['Bahasa'].includes(currentNamaKlaster)) { 
+    prefixLokasi = 'Wilayah penutur utama'; 
+    showTahun = false; 
+  }
+  else if (['Kuliner', 'Lukisan', 'Lontar'].includes(currentNamaKlaster)) { 
+    prefixLokasi = 'Asal'; 
+    showTahun = false; 
+  }
+  else if (currentKategoriUtama === 'alam') {
+    // Jika ingin pakai format: "(Nama Klaster) Khas", uncomment baris di bawah:
+    // prefixLokasi = `${currentNamaKlaster} khas`;
+    prefixLokasi = 'Lokasi'; 
+    showTahun = false; 
+  }
+  else if (['Karya Fiksi'].includes(currentNamaKlaster)) { prefixLokasi = 'Latar'; }
+  else if (['Surat Kabar', 'Publikasi'].includes(currentNamaKlaster)) { prefixLokasi = 'Tempat terbit'; }
+  else if (['Kantor', 'Perusahaan'].includes(currentNamaKlaster)) { prefixLokasi = 'Kantor'; }
+  else if (['Tokoh'].includes(currentNamaKlaster)) { prefixLokasi = 'Tempat lahir'; }
+  else if (['Peristiwa', 'Perang'].includes(currentNamaKlaster)) { prefixLokasi = 'Tempat kejadian'; }
+
+  // 2. Tentukan Prefix Tahun berdasarkan Prefix Lokasi (Hanya dieksekusi jika showTahun === true)
+  if (prefixLokasi === 'Tempat terbit') prefixTahun = 'Terbit perdana';
+  else if (prefixLokasi === 'Provinsi') prefixTahun = 'Hari jadi';
+  else if (prefixLokasi === 'Latar') prefixTahun = 'Terbit';
+  else if (prefixLokasi === 'Kantor') prefixTahun = 'Sejak';
+  else if (prefixLokasi === 'Tempat lahir') prefixTahun = 'Lahir';
+  else if (prefixLokasi === 'Tempat kejadian') prefixTahun = 'Waktu/periode';
+
+  // 3. Render HTML Lokasi
+  let infoLokasiHtml = '';
   if (record.lat && record.lon) {
     let mapsUrl = `https://www.google.com/maps?q=${record.lat},${record.lon}`;
-    infoLokasiHtml = `<p class="koordinat-link">${prefixLokasi.replace(':', '')} <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" title="Buka di Google Maps">${namaLokasi}</a></p>`;
+    infoLokasiHtml = `<p class="koordinat-link">${prefixLokasi}: <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" title="Buka di Google Maps">${namaLokasi}</a></p>`;
   } else {
     infoLokasiHtml = 
-      `<p class="koordinat-link">${prefixLokasi} ${namaLokasi}</p>` +
+      `<p class="koordinat-link">${prefixLokasi}: ${namaLokasi}</p>` +
       `<p>Koordinat: <span style="font-style: italic; color: #888;">Data belum tersedia</span></p>`;
   }
 
+  // 4. Render HTML Tahun (Hanya dicetak jika bukan klaster tanpa-tahun/alam)
   let infoTahunHtml = '';
-  if (currentKategoriUtama !== 'alam') {
-    let labelTahun = 'Didirikan';
-    if (currentKategoriUtama === 'tokoh') labelTahun = 'Lahir';
-    else if (currentKategoriUtama === 'publikasi' || currentKategoriUtama === 'pers') labelTahun = 'Diterbitkan';
-    else if (currentKategoriUtama === 'fiksi') labelTahun = 'Diciptakan';
-    else if (currentKategoriUtama === 'kuliner') labelTahun = 'Diciptakan/Muncul';
-    else if (currentKategoriUtama === 'bahasa') labelTahun = 'Mulai Digunakan';
-
+  if (showTahun) {
     if (record.tahunBerdiri) {
-      infoTahunHtml = `<p>${labelTahun}: ${record.tahunBerdiri}</p>`;
+      infoTahunHtml = `<p>${prefixTahun}: ${record.tahunBerdiri}</p>`;
     } else {
-      infoTahunHtml = `<p>${labelTahun}: <span style="font-style: italic; color: #888;">Data belum tersedia</span></p>`;
+      infoTahunHtml = `<p>${prefixTahun}: <span style="font-style: italic; color: #888;">Data belum tersedia</span></p>`;
     }
   }
 
+  // Sisa perakitan HTML ke panel...
   let eventsHtmlPlaceholder = `
     <div id="events-container-${qid}" class="loading" style="margin-top: 8px; min-height: 24px;">
       <div class="loader" style="width: 20px; height: 20px; border-width: 2px; margin: 0;"></div>
