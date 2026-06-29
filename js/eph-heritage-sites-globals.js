@@ -3,7 +3,7 @@
 const BASE_TITLE = 'WikiJelajah';
 
 const KUMPULAN_KUERI_0 = {
-  'universal': `SELECT DISTINCT ?site ?siteLabel ?p131Lokasi ?p131LokasiLabel ?p131Image ?provinsi (SAMPLE(?tahunVal) AS ?tahunBerdiriMentah) (SAMPLE(?tahunPrec) AS ?tahunPresisi) WHERE {
+  'universal': `SELECT DISTINCT ?site ?siteLabel ?p131Lokasi ?p131LokasiLabel ?provinsi (SAMPLE(?tahunVal) AS ?tahunBerdiriMentah) (SAMPLE(?tahunPrec) AS ?tahunPresisi) WHERE {
     <PLACEHOLDER_KURUNG_BUKA>
       VALUES ?jenis { <PLACEHOLDER_JENIS> }
       ?site wdt:P31 ?jenis .
@@ -19,12 +19,11 @@ const KUMPULAN_KUERI_0 = {
       ?tahunNode wikibase:timeValue ?tahunVal ;
                  wikibase:timePrecision ?tahunPrec .
     }
-    OPTIONAL { ?p131Lokasi wdt:P18 ?p131Image . }
     SERVICE wikibase:label { bd:serviceParam wikibase:language "id". }
-  } GROUP BY ?site ?siteLabel ?p131Lokasi ?p131LokasiLabel ?p131Image ?provinsi`,
+  } GROUP BY ?site ?siteLabel ?p131Lokasi ?p131LokasiLabel ?provinsi`,
 
   // === TEMPLAT BARU: LOKASI OPTIONAL TAPI WAJIB INDONESIA ===
-  'khusus_negara_all': `SELECT DISTINCT ?site ?siteLabel ?p131Lokasi ?p131LokasiLabel ?p131Image ?provinsi (SAMPLE(?tahunVal) AS ?tahunBerdiriMentah) (SAMPLE(?tahunPrec) AS ?tahunPresisi) WHERE {
+  'khusus_negara_all': `SELECT DISTINCT ?site ?siteLabel ?p131Lokasi ?p131LokasiLabel ?provinsi (SAMPLE(?tahunVal) AS ?tahunBerdiriMentah) (SAMPLE(?tahunPrec) AS ?tahunPresisi) WHERE {
     VALUES ?jenis { <PLACEHOLDER_JENIS> }
     ?site wdt:P31 ?jenis .
     ?site wdt:P17 wd:Q252 . # SYARAT MUTLAK: HARUS DI INDONESIA
@@ -42,9 +41,8 @@ const KUMPULAN_KUERI_0 = {
       ?tahunNode wikibase:timeValue ?tahunVal ;
                  wikibase:timePrecision ?tahunPrec .
     }
-    OPTIONAL { ?p131Lokasi wdt:P18 ?p131Image . }
     SERVICE wikibase:label { bd:serviceParam wikibase:language "id". }
-  } GROUP BY ?site ?siteLabel ?p131Lokasi ?p131LokasiLabel ?p131Image ?provinsi`
+  } GROUP BY ?site ?siteLabel ?p131Lokasi ?p131LokasiLabel ?provinsi`
 };
 
 const KUMPULAN_KUERI_1 = {
