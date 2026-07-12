@@ -824,19 +824,28 @@ function populateMapAndIndex() {
       // =======================================================
       // +++ TAMBAHAN BARU: LOGIKA KLIK KEDUA (KHUSUS MOBILE) +++
       // =======================================================
-      mapMarker.on('click', function() {
-        // Cek apakah hash URL saat ini sama persis dengan Q-ID marker ini.
-        // Jika sama, ini pasti klik kedua (atau klik saat popup sedang aktif).
-        if (window.location.hash === '#' + qid) {
+   mapMarker.on('click', function() {
+        // Cek apakah popup marker ini SEDANG terbuka saat diklik
+        if (this.isPopupOpen()) {
           
-          // 1. Tarik panel mobile ke atas (jika fungsi ini ada di JS utama Anda)
+          // --- SKENARIO KLIK KEDUA / KETIGA ---
+          // 1. Tarik panel mobile ke atas
           if (typeof window.setMobilePanelExpanded === 'function') {
             window.setMobilePanelExpanded(true);
           }
           
-          // 2. Cegah sifat asli Leaflet yang menutup popup jika diklik ganda
-          this.openPopup(); 
-        }
+          // 2. Mencegah popup tertutup oleh sifat asli Leaflet.
+          // Sifat asli Leaflet adalah menutup popup jika diklik saat sedang terbuka.
+          // Kita gunakan jeda 10ms untuk membukanya kembali tepat setelah Leaflet mencoba menutupnya.
+          setTimeout(() => {
+            this.openPopup(); 
+          }, 10);
+          
+        } 
+        // --- SKENARIO KLIK PERTAMA ---
+        // Jika isPopupOpen() false, kode ini tidak melakukan apa-apa.
+        // Biarkan Leaflet membuka popup secara normal.
+        // Nanti Map.on('popupopen') di JS 1 Anda yang akan otomatis mengubah Hash URL dan memuat data!
       });
       // =======================================================
 
