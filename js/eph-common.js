@@ -112,20 +112,14 @@ btnMulai.addEventListener('click', function() {
     // =========================================================
     // +++ PASANG BOM WAKTU DI SINI SAYANGKU +++
     // =========================================================
-    loadingTimeoutToken = setTimeout(() => {
-      // Tembak langsung bungkus utamanya biar pasti kena
-      let indexList = document.getElementById('index-list'); 
+loadingTimeoutToken = setTimeout(() => {
+      // KUNCI PERBAIKAN: Kita bidik langsung elemen <p>-nya saja, 
+      // jangan bidik #index-list agar judul & animasi tidak terhapus.
+      let loadingDesc = document.querySelector('#index-list p'); 
       
       // Pastikan statusnya memang masih mencari data (isFetching = true)
-      if (indexList && isFetching) {
-        indexList.innerHTML = `
-          <div style="padding: 20px; text-align: center; margin-top: 20px;">
-            <p style="color:#cc0000; font-weight:bold; font-size: 15px;">
-              ⏳ Data yang ditarik terlalu banyak.<br>
-              Harap menunggu, proses ini bisa memakan waktu 3-5 menit...
-            </p>
-          </div>
-        `;
+      if (loadingDesc && isFetching) {
+        loadingDesc.innerHTML = `Data yang ditarik terlalu banyak. Harap menunggu, proses ini bisa memakan waktu 3-5 menit...`;
       }
     }, 5000); // Set 5000 (5 detik)
     // =========================================================
