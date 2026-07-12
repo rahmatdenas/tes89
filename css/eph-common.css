@@ -21,6 +21,10 @@ body {
   user-select: none;
 }
 
+.leaflet-popup-tip-container {
+   margin-top:-1px;
+}
+
 /* Animasi Loader (Sudah digabung dengan warna dari CSS2) */
 .loader {   
   border-radius: 50%;
