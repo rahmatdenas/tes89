@@ -816,26 +816,23 @@ function populateMapAndIndex() {
       );
       record.mapMarker = mapMarker;
       
-      mapMarker.bindPopup(record.title, { 
+  mapMarker.bindPopup(record.title, { 
         closeButton: false,
         maxWidth: 200 
       });
 
       // =======================================================
-      // +++ TAMBAHAN BARU: LOGIKA KLIK KEDUA (KHUSUS MOBILE) +++
+      // +++ LOGIKA KLIK KEDUA (KHUSUS MOBILE) +++
       // =======================================================
       mapMarker.on('click', function() {
-        // Cek apakah hash URL saat ini sama persis dengan Q-ID marker ini.
-        // Jika sama, ini pasti klik kedua (atau klik saat popup sedang aktif).
+        // Cek apakah hash URL saat ini sama persis dengan Q-ID marker.
+        // Jika sama, ini adalah klik kedua di area yang sama.
         if (window.location.hash === '#' + qid) {
           
-          // 1. Tarik panel mobile ke atas (jika fungsi ini ada di JS utama Anda)
+          // Tarik panel mobile ke atas
           if (typeof window.setMobilePanelExpanded === 'function') {
             window.setMobilePanelExpanded(true);
           }
-          
-          // 2. Cegah sifat asli Leaflet yang menutup popup jika diklik ganda
-          this.openPopup(); 
         }
       });
       // =======================================================
