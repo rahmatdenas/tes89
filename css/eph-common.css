@@ -135,7 +135,7 @@ nav li a {
   transition: background 0.3s, color 0.3s;
 }
 
-nav li:hover,
+nav li a:hover,
 nav li a:active, 
 nav li.selected > a, nav li > a.selected,
 nav li.active > a, nav li > a.active {
