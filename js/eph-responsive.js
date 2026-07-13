@@ -31,9 +31,15 @@
     return handleHeight + headerHeight; 
   }
 
-  function collapsedTranslate() {
-    // Kurangi total tinggi panel dengan area header+handle yang ingin disisakan
-    return Math.max(panel.offsetHeight - getVisibleTopHeight(), 0);
+function collapsedTranslate() {
+    // 1. Tangkap elemen navigasi utama dan hitung tingginya secara dinamis
+    var navElement = document.getElementById('navigasi-utama');
+    
+    // Jika navigasi ditemukan, ambil tinggi aslinya. Jika belum, beri jarak aman 60px.
+    var navHeight = navElement ? navElement.offsetHeight : 60; 
+
+    // 2. Kurangi tinggi panel dengan (Header + Handle) dan KURANGI LAGI dengan tinggi navigasi
+    return Math.max(panel.offsetHeight - getVisibleTopHeight() - navHeight, 0);
   }
 
   function clampY(y) {
