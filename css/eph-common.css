@@ -126,7 +126,8 @@ nav li a {
   transition: background 0.3s, color 0.3s;
 }
 
-nav li a:active,
+nav li:hover,
+nav li a:active, 
 nav li.selected > a, nav li > a.selected,
 nav li.active > a, nav li > a.active {
   background: transparent;
@@ -138,7 +139,7 @@ nav li.active > a, nav li > a.active {
 }
 
 
-#submenu-atas li a:hover, nav li:hover {
+#submenu-atas li a:hover {
     background: #611;
    color: #fff;
 }
