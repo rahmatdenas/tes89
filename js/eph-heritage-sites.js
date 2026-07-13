@@ -964,7 +964,6 @@ var currentUsiaFilter = 'all';
 var activeFeatures = new Set(); 
 var currentSearchQuery = '';
 var userLocation = null;
-var userLocationMarker = null;
 var userRadiusCircle = null;
 
 function generateFilterSelect() {
@@ -1048,8 +1047,10 @@ selectRegion.addEventListener('change', function() {
     if (btnAll) {
       btnAll.addEventListener('click', function() {
         userLocation = null;
-        if (userLocationMarker) Map.removeLayer(userLocationMarker);
-if (userRadiusCircle) Map.removeLayer(userRadiusCircle);
+ if (window.TombolGPSMap) window.TombolGPSMap.stop();
+        
+        if (userRadiusCircle) Map.removeLayer(userRadiusCircle);
+        
         activeFeatures.clear();
         btnAll.classList.add('active');
         document.querySelectorAll('.feat-btn:not(#btn-all)').forEach(b => b.classList.remove('active'));
