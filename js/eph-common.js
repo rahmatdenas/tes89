@@ -43,21 +43,45 @@ function init() {
   initMap();
   setupLandingForm();
   window.addEventListener('hashchange', processHashChange);
+
+  // =========================================================
+  // LANGKAH B: LOGIKA BUKA-TUTUP MENU DROP-UP
+  // =========================================================
+  document.addEventListener('click', function(e) {
+    let btnMenu = document.getElementById('btn-menu-induk');
+    let subMenu = document.getElementById('submenu-atas');
+    
+    if (!btnMenu || !subMenu) return;
+
+    // Jika tombol "Menu" ditekan, buka/tutup anak menu
+    if (e.target === btnMenu) {
+      subMenu.style.display = (subMenu.style.display === 'none') ? 'flex' : 'none';
+    } 
+    // Jika pengguna mengklik di area luar menu, sembunyikan
+    else if (!subMenu.contains(e.target)) {
+      subMenu.style.display = 'none';
+    } 
+    // Jika pengguna mengklik salah satu link (A) di dalam anak menu, sembunyikan
+    else if (e.target.tagName === 'A') {
+      subMenu.style.display = 'none';
+    }
+  });
+  // =========================================================
   
-Map.on('popupopen', function(e) { 
-  e.popup._sudahDiupdate = false;
+  Map.on('popupopen', function(e) { 
+    e.popup._sudahDiupdate = false;
     let qid = e.popup._qid;
-  if (window.location.hash !== '#' + qid) {
-    window.location.hash = qid; 
-  }
+    if (window.location.hash !== '#' + qid) {
+      window.location.hash = qid; 
+    }
     let record = Records[qid];
+    
     // 2. INJEKSI GAMBAR POPUP
     if (record.imageFilename && !e.popup._hasImage) {
-      
       let encodedFilename = encodeURIComponent(record.imageFilename);
       let imgUrl = `${COMMONS_WIKI_URL_PREF}Special:FilePath/${encodedFilename}?width=250`;
-let imgHtml = `
-<div style="text-align:center; margin-top:17px;margin-bottom: 5px;">
+      let imgHtml = `
+            <div style="text-align:center; margin-top:17px;margin-bottom: 5px;">
               <img src="${imgUrl}" 
                    draggable="false" 
                    style="width:100%; min-width:90px; height:130px; object-fit:cover; border-radius:4px;" 
@@ -65,15 +89,13 @@ let imgHtml = `
                    onload="let p = Records['${qid}'].popup; if (p && !p._sudahDiupdate) { p._sudahDiupdate = true; p.update(); }">
             </div>
           `;
-      e.popup.setContent(imgHtml + `${record.title}`);
-      
+      e.popup.setContent(imgHtml + `${record.title}`);      
       e.popup._hasImage = true; 
     }
   });
-  
-  // Langsung proses status hash saat web dibuka tanpa memaksa tambah #landing
   processHashChange();
 }
+
 
 function setupLandingForm() {
   let dropdown = document.getElementById('jenis-dropdown');
@@ -1029,22 +1051,27 @@ if (currentIndex === -1) {
     }
 
   } else {
-    // KEMBALI KE MODE STANDAR (Beranda | Hasil | Tentang)
+ // KEMBALI KE MODE STANDAR (Beranda | Hasil | Tentang)
     navStandar.style.display = 'flex';
     navDetail.style.display = 'none';
     
-    // Manajemen indikator 'aktif' (opsional jika ada kelas CSS .selected)
-    navStandar.querySelectorAll('li').forEach(li => {
+    // --- KUNCI PERBAIKAN: Gunakan selector .nav-tab agar tidak nyasar ke anak menu ---
+    document.querySelectorAll('#nav-standar .nav-tab').forEach(li => {
       let link = li.querySelector('a');
       if (!link) return;
       let hrefVal = link.getAttribute('href');
       
-      // Cocokkan href dengan URL saat ini
-      if ((fragment === '' && hrefVal === '#') ||
-          (fragment === 'hasil' && hrefVal === '#hasil') ||
-          (fragment === 'about' && hrefVal === '#about')) {
+      // Jika URL sekarang murni kosong, atau tutorial, atau medsos, anggap "Menu" (Beranda) sedang aktif
+      if ((fragment === '' || fragment === 'tutorial' || fragment === 'medsos') && link.id === 'btn-menu-induk') {
         li.classList.add('selected');
-      } else {
+      } 
+      else if (fragment === 'hasil' && hrefVal === '#hasil') {
+        li.classList.add('selected');
+      } 
+      else if (fragment === 'about' && hrefVal === '#about') {
+        li.classList.add('selected');
+      } 
+      else {
         li.classList.remove('selected');
       }
     });
