@@ -273,6 +273,7 @@ Map = new L.map('map', {
   window.TombolGPSMap = L.control.locate({ 
     position: 'bottomright', 
     showCompass: false, 
+    showPopup: false,
     strings: { title: "Tunjukkan lokasi saya" },
     icon: 'ikon-gps-custom' 
   }).addTo(Map);
@@ -291,12 +292,6 @@ Map = new L.map('map', {
     }
   });
   
-L.control.locate({ 
-    position: 'bottomright', 
-    showCompass: false, 
-    strings: { title: "Tunjukkan lokasi saya" },
-    icon: 'ikon-gps-custom' // Kita perintahkan untuk memanggil kelas CSS ini
-  }).addTo(Map);
 
   let powered = L.control({ position: 'bottomleft' });
   powered.onAdd = function(Map) {
