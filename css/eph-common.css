@@ -138,6 +138,11 @@ nav li.active > a, nav li > a.active {
   padding: 10px 20px 10px 20px;
 }
 
+
+#submenu-atas li a:hover {
+    background: #611;
+}
+
 /* Mengunci warna tombol navigasi agar tidak kembali ke hitam bawaan browser */
 #nav-detail a, 
 #nav-detail a:not([href]) {
