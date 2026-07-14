@@ -876,7 +876,7 @@ function populateMapAndIndex() {
     if (!record.isCompound && record.lat && record.lon) {
       let mapMarker = L.marker(
         [record.lat, record.lon],
-        { icon: L.ExtraMarkers.icon({ icon: '', markerColor : 'orange-dark' }) }
+        { icon: ikonTetesanAir }
       );
       record.mapMarker = mapMarker;
       
