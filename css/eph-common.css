@@ -105,7 +105,7 @@ input, textarea, select {
   /* --- KUNCI PERBAIKAN: FLEXBOX --- */
   display: flex; 
   align-items: center; /* Memastikan ikon dan teks sejajar di tengah secara vertikal */
-  padding: 20px; /* Ruang bingkai dipindah ke sini agar menaungi ikon dan teks sekaligus */
+  padding: 25px 20px; /* Ruang bingkai dipindah ke sini agar menaungi ikon dan teks sekaligus */
    background: #822;
 }
 
