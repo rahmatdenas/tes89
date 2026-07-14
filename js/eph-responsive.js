@@ -250,6 +250,12 @@ function updateLabel(expanded) {
       }
     }, true); 
 
+        document.addEventListener('focusin', function(e) {
+      if (preventNextClick && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+        e.target.blur();
+      }
+    }, true);
+
     panel.addEventListener('dragstart', function(e) {
       if (e.target.tagName === 'IMG') {
         e.preventDefault();
