@@ -42,14 +42,7 @@
   }
 
    #navigasi-utama {
-    position: fixed !important;
-    bottom: 0;
-    left: 0;
-    right: 0;
     width: 100%;
-    z-index: 9999; /* Pastikan selalu berada di lapisan paling atas */
-    background: #882222; /* Pastikan warna latarnya solid agar tidak tembus pandang */
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Sedikit bayangan pemisah */
   }
 
   /* Panel berperan sebagai bottom sheet: secara default
