@@ -38,8 +38,9 @@ var searchDebounceToken = null;
 
 const ikonTetesanAir = L.divIcon({
   className: 'ikon-marker-ringan',
-  // Penyesuaian viewBox: -14 dan -13 memberi margin presisi setara ~1px di layar
   html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-14 -13 412 538" width="30" height="40" style="overflow: visible;">
+           <ellipse cx="192" cy="510" rx="60" ry="15" fill="rgba(0,0,0,0.4)" />
+           
            <path fill="#cc4444" fill-rule="evenodd" 
                  d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0z 
                     M 192, 132 a 60,60 0 1,0 0,120 a 60,60 0 1,0 0,-120 z"/>
