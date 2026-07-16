@@ -60,7 +60,7 @@ input, textarea, select {
 .efeklogo {
  opacity:0.6; 
 }
-.efeklogo:hover {
+.efeklogo:hover, .efeklogo.nyala-sementara {
  opacity:1; 
 }
 
